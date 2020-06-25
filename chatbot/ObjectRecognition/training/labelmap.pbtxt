@@ -1,0 +1,16 @@
+item {
+    id: 1
+    name: 'raspberry_pi'
+}
+item {
+    id: 2
+    name: 'Arduino_Nano'
+}
+item {
+    id: 3
+    name: 'ESP8266'
+}
+item {
+    id: 4
+    name: 'Heltec_ESP32_Lora'
+}

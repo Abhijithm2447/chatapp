@@ -6,15 +6,20 @@ import tarfile
 import tensorflow as tf
 import zipfile
 
+from datetime import datetime
 from distutils.version import StrictVersion
 from collections import defaultdict
 from io import StringIO
 from matplotlib import pyplot as plt
 from PIL import Image
 
+import pdb
+
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util
+
+PATH_SAVE_IMAGE = os.path.join("static", "recognized_image")
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
@@ -115,28 +120,38 @@ def run_inference_for_single_image(image, graph):
       if 'detection_masks' in output_dict:
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
   return output_dict
-def predict_object():
-    i = 0
+def predict_object(image):
+    """i = 0
     for image_path in TEST_IMAGE_PATHS:
-        image = Image.open(image_path)
-        # the array based representation of the image will be used later in order to prepare the
-        # result image with boxes and labels on it.
-        image_np = load_image_into_numpy_array(image)
-        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-        image_np_expanded = np.expand_dims(image_np, axis=0)
-        # Actual detection.
-        output_dict = run_inference_for_single_image(image_np_expanded, detection_graph)
-        print(output_dict)
-        # Visualization of the results of a detection.
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image_np,
-            output_dict['detection_boxes'],
-            output_dict['detection_classes'],
-            output_dict['detection_scores'],
-            category_index,
-            instance_masks=output_dict.get('detection_masks'),
-            use_normalized_coordinates=True,
-            line_thickness=8)
-        plt.figure(figsize=IMAGE_SIZE)
-        plt.imsave("result_%d.png"%i,image_np)
-        i+=1
+        image = Image.open(image_path)"""
+    # the array based representation of the image will be used later in order to prepare the
+    # result image with boxes and labels on it.    
+    # image = Image.open("test2.jpg")
+    
+    now = datetime.now()
+    time = now.strftime("%Y_%m_%d_%H_%M_%S_%f")  
+    path = os.path.join(PATH_SAVE_IMAGE, "%s.png"%time)
+    image.save(path)  
+    image_np = load_image_into_numpy_array(image)
+    
+    
+    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+    image_np_expanded = np.expand_dims(image_np, axis=0)
+    # Actual detection.
+    output_dict = run_inference_for_single_image(image_np_expanded, detection_graph)
+    # print(output_dict)
+    # Visualization of the results of a detection.
+    image_np, detected_classes = vis_util.visualize_boxes_and_labels_on_image_array(
+        image_np,
+        output_dict['detection_boxes'],
+        output_dict['detection_classes'],
+        output_dict['detection_scores'],
+        category_index,
+        instance_masks=output_dict.get('detection_masks'),
+        use_normalized_coordinates=True,
+        line_thickness=8)
+    plt.figure(figsize=IMAGE_SIZE)
+    path = os.path.join(PATH_SAVE_IMAGE, "%s_p.png"%time)
+    plt.imsave(path,image_np)    
+    return detected_classes
+    
